@@ -7,51 +7,75 @@
     // Let's create our angular module
     var friends_app = angular.module('friends_app', []);
     // create the FriendFactory
-    friends_app.factory('FriendFactory', function() {
+    friends_app.factory('FriendFactory', function($http) {
       var factory = {};
       var friends = [];
     //Restful syntax: index = get all that object
-      factory.index = function() {
-        return friends;
+      factory.index = function(callback) {
+        $http.get('/friends').success(function(output){
+          friends = output
+          callback(friends);
+        })
       }
       // note the use of callbacks!
       // Restful syntax: create = add one to that object
+
       factory.create = function(info, callback) {
-        friends.push({name: info.name, age: info.age});
-        callback(friends);
+        console.log('info',info);
+        $http.post('/new', info).success(function(){
+          callback(friends)
+        })
+      }
+      factory.destroy = function(id, callback) {
+        console.log('factory destroy',id);
+        $http.delete('/destroy/' + id).success(function(){
+          callback(friends)
+        })
       }
       return factory;
     });
       // Now let's create a controller with some hardcoded data!
-      friends_app.controller('FriendsController', function($scope, FriendFactory) {
-        $scope.friends = [{name: "Michael", age: 34}, {name: "Andrew", age: 24}];
-        $scope.addfriend = function() {
+      friends_app.controller('FriendsController', function(FriendFactory) {
+        var self = this
+        self.friends = [];
+        FriendFactory.index(function(data){
+          self.friends = data
+        })
+        self.create = function() {
           // note the use of callbacks here
-          FriendFactory.create($scope.new_friend, function() {
-        //the line below says: set our $scope.friends variable to whatever is returned from FriendFactory.index.  In this case, that will be all the friends.
-            $scope.friends = FriendFactory.index();
-            $scope.new_friend = {};
-          });
+          FriendFactory.create(self.new_friend,function(){
+            FriendFactory.index(function(data){
+              self.friends = data
+            })
+          })
+          self.new_friend = {}
+        }
+        self.destroy = function(id){
+          // console.log(friend);
+          FriendFactory.destroy(id,function(){
+            FriendFactory.index(function(data){
+              self.friends = data
+            })
+          })
         }
       })
   </script>
 </head>
 <!-- everything in the body is going to use the friends controller (this gives us access to the friends controller $scope) -->
-<body ng-controller="FriendsController">
+<body ng-controller="FriendsController as fc">
   <h1>Friends</h1>
   <input type="text" ng-model="filter_name" placeholder="filter">
-  {{filter_name}}
   <ul>
     <!-- here is where we are going to display friends -->
-    <li ng-repeat="friend in friends | filter: filter_name">
-      {{friend.name}}, {{friend.age}}
+    <li ng-repeat="friend in fc.friends | filter: filter_name" ng-model="friend">
+      {{friend.name}}, {{friend.age}} <a href="" ng-click="fc.destroy(friend._id)">Delete</a>
     </li>
   </ul>
   <h1>Add a Friend</h1>
   <!-- objects and properties nothing scary -->
-  <input type="text" ng-model="new_friend.name" placeholder="name">
-  <input type="text" ng-model="new_friend.age" placeholder="age">
+  <input type="text" ng-model="fc.new_friend.name" placeholder="name">
+  <input type="text" ng-model="fc.new_friend.age" placeholder="age">
   <!-- addfriend() is a method we are going to make in the angular controller -->
-  <input type="submit" ng-click="addfriend()">
+  <input type="submit" ng-click="fc.create()">
 </body>
 </html>

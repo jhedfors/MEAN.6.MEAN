@@ -1,22 +1,40 @@
-// First add the following two lines at the top of the friends controller so that we can access our model through var Friend
-// need to require mongoose to be able to run mongoose.model()
 var mongoose = require('mongoose');
 var Friend = mongoose.model('Friend');
-
-// this is our friends.js file located at /server/controllers/friends.js
 // note the immediate function and the object that is returned
-// Edit the show method as follows
 module.exports = (function() {
  return {
   index: function(req, res) {
      Friend.find({}, function(err, results) {
        if(err) {
-         console.log(err);
+         res.json(err);
        } else {
          res.json(results);
        }
    })
+ },
+  create: function(req,res){
+    console.log('mongo controller req.body',req.body);
+    var friend = new Friend(req.body)
+    friend.save(function(err,results){
+      if (err) {
+        res.json(err)
+      }
+      else {
+        res.json(results)
+      }
+    })
+  },
+  destroy: function(req,res){
+    console.log('mongo controller req.body',req.params.id);
+    var removed = Friend.remove({_id: req.params.id}, function(err,results){
+      if (err) {
+        res.json(err)
+      }else{
+        res.json(results)
+      }
+    })
+    // console.log('removed',removed);
+
   }
  }
 })();
-// note that this is just a code snippet of the show method from the object returned in the controller (this includes the exports module.exports
