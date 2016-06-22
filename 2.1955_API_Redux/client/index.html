@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+  <script type="text/javascript">
+    var myApp = angular.module('myApp',['ngRoute','ngMessages'])
+    myApp.config(function($routeProvider){
+      $routeProvider
+        .when('/',{
+          templateUrl:'partials/dashboard.html'
+        })
+        .otherwise({
+          redirectTo:'/'
+        })
+    })
+    myApp.factory('ninteenFiftyFiverFactory',function($http){
+      var factory = {}
+      var names = []
+      factory.index = function(callback) {
+        $http.get('/index').success(function(output){
+          names = output
+          callback(names);
+          console.log(names);
+        })
+      }
+      factory.create = function(name, callback) {
+        console.log('name',name);
+        $http.get('/new/'+name).success(function(){
+          callback(names)
+        })
+      }
+      factory.destroy = function(name, callback) {
+        console.log('factory destroy',name);
+        $http.delete('/destroy/' + name).success(function(){
+          console.log('success');
+          callback(names)
+        })
+      }
+      return factory;
+      // console.log(self.ninteenFiftyFivers);
+    })
+    myApp.controller('ninteenFiftyFiversController',function(ninteenFiftyFiverFactory){
+      var self = this
+      self.names = []
+      ninteenFiftyFiverFactory.index(function(data){
+        console.log(data);
+        self.names = data
+      })
+      self.create = function(){
+        ninteenFiftyFiverFactory.create(self.name,function(){
+          ninteenFiftyFiverFactory.index(function(data){
+            self.names = data
+            self.name = ''
+          })
+        })
+      }
+      self.destroy = function(name){
+        console.log("controller destroy",name.name);
+        ninteenFiftyFiverFactory.destroy(name.name, function(){
+          ninteenFiftyFiverFactory.index(function(data){
+            self.names = data
+          })
+        })
+      }
+    })
+
+
+  </script>
+
+  <body>
+    <div ng-app="myApp">
+      <div ng-view="">
+
+      </div>
+
+    </div>
+  </body>
+</html>

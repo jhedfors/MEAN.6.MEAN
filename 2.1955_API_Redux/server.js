@@ -1,0 +1,17 @@
+//import required modules
+var express = require('express')
+var path = require('path')
+var bodyParser = require('body-parser')
+var mongoose = require('mongoose')
+
+//setup APP
+var app = express()
+app.use(bodyParser.json())
+app.use(express.static(path.join(__dirname, '/client')))
+require('./server/config/mongoose.js')
+require('./server/config/routes.js')(app)
+// var routes_setter = require('./server/config/routes.js')
+// routes_setter(app)
+app.listen(8999, function(){
+  console.log(8999);
+})

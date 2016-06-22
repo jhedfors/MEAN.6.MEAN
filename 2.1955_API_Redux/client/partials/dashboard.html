@@ -1,0 +1,28 @@
+<div ng-controller="ninteenFiftyFiversController as NC">
+  <h1>1955 Dashboard</h1>
+  <hr>
+  <p>
+    Add people who were born in 1955
+  </p>
+  <div >
+    <input type="text" name="name" ng-model="NC.name"> <button ng-click="NC.create()">Submit</button>
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Name
+          </th>
+          <th>
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="name in NC.names">
+          <td  ng-model="NC.name" ng-bind="name.name"></td>
+          <td> <button type="button" name="button" ng-click="NC.destroy(name)">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
