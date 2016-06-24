@@ -1,0 +1,12 @@
+#sidebar{
+  width: 200px;
+  height: 100%;
+  display: inline-block;
+}
+#products{
+  margin: 50px;
+  width: auto;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top
+}

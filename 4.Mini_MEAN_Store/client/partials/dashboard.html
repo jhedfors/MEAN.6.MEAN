@@ -1,0 +1,34 @@
+<div id="dashboard_product" ng-controller="productsController as pc">
+  <div id="sidebar_dashboard">
+    <input type="text" name="name" value="" ng-model="product_filter">
+    <button type="button" name="button">Filter</button>
+  <div id="products">
+    <div class="product" ng-repeat="product in pc.products | limitTo:3  | filter:product_filter">
+      <img src="{{product.image}}" alt="{{product.name}}" />
+      <p>
+        {{product.name}}<br>
+        ({{product.quantity}} available)
+      </p>
+    </div>
+    <p>
+      <a href="#/products">Show all products...</a>
+    </p>
+  </div>
+</div>
+<div ng-controller="ordersController as oc">
+  <h4>Recent Orders</h4>
+  <p ng-repeat="order in oc.orders | limitTo:3 | orderBy : reverse : 'createdAt' ">
+    {{ order._customer.name }} purchased {{ order.quantity }} {{ order._product.name }} ({{ order.createdAt  | date   : "medium" }})
+  </p>
+  <p>
+    <a href="#/orders">Show all orders...</a>
+  </p>
+<div ng-controller="customersController as cc">
+  <h4>New Customers</h4>
+  <p ng-repeat="customer in cc.customers | limitTo:3  | orderBy : reverse : 'customer.createdAt' ">
+    {{ customer.name }} joined the store ({{ customer.createdAt | date : "medium" }})
+  </p>
+  <p>
+    <a href="#/customers">Show all customers...</a>
+  </p>
+</div>

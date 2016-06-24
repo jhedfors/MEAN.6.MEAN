@@ -1,0 +1,34 @@
+<div ng-controller="productsController as pc">
+  <div id="sidebar">
+    <input type="text" name="name" value="" ng-model="product_filter">
+    <button type="button" name="button">Filter</button>
+    <h4>Add a new product</h4>
+    <p>
+      Name
+    </p>
+    <input type="text" name="name" value="" placeholder="name..." ng-model="pc.new.name">
+    <p>
+      Image (url):
+    </p>
+    <input type="text" name="image" value="" placeholder="http://" ng-model="pc.new.image">
+    <p>
+      Description:
+    </p>
+    <textarea name="name" ng-model="pc.new.description"></textarea>
+    <p>
+      Initial Quantity:
+    </p>
+    <input type="number" name="num" value="1" min="1" ng-model="pc.new.quantity">
+    <button type="button" name="button" ng-click="pc.create()">Create</button>
+  </div>
+  <div id="products">
+    <div class="product" ng-repeat="product in pc.products | filter:product_filter">
+      <img src="{{product.image}}" alt="{{product.name}}" />
+      <p>
+        {{product.name}}<br>
+        ({{product.quantity}} available)
+      </p>
+    </div>
+  </div>
+
+</div>
